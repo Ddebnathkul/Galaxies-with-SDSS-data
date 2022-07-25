@@ -9,8 +9,11 @@ from pyrolite.plot import pyroplot
 from pyrolite.plot.density import density
 from pyrolite.comp.codata import close
 
-################# READING THE CSV FILE ###########
+# READING THE CSV FILE
+# The CSV file from SDSS contains several parameters such as the data values for the red filter, or the green filter etc.
+# for more queries please check https://www.sdss.org/surveys/
 
+# change the name of the file accordingly
 with open('MyTable_1_Dwaipayan.csv') as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     line_count = 0
@@ -26,7 +29,7 @@ with open('MyTable_1_Dwaipayan.csv') as csv_file:
 df = pd.read_csv("MyTable_1_Dwaipayan.csv", header=0, skip_blank_lines=True, )
 
 
-########### DATA ##################################
+# Reading the DATA 
 g_data=df['g']
 r_data=df['r']
 Mr_data=df['Mr']
@@ -36,21 +39,24 @@ r50_i = df['R50_i']
 r50_u = df['R50_u']
 r50_z = df['R50_z']
 z=df['z']
-h= 0.71 #HUBBLE CONSTANT
+h= 0.71 # Typical value of HUBBLE CONSTANT 
 
-########### THE COLOR G-R #########################
+
+# THE COLOR G-R (The relative difference in the green and red filters)
 gr_data=[]
 for i in range (len(g_data)):
 	gr= g_data[i]- r_data[i]
 	gr_data.append(gr)
 
-########### ABSOLUTE MAGNITUDE IN R BAND ##########
+
+# ABSOLUTE MAGNITUDE IN R BAND (the red filter)
 Mr=[]
 for i in range (len(g_data)):
 	M= Mr_data[i] - 5*math.log(h)
 	Mr.append(M)
-		
-#### THE EFFECTIVE RADIUS (PETROSIAN RADIUS 50) ####
+
+	
+#THE EFFECTIVE RADIUS (called PETROSIAN RADIUS 50 in SDSS)
 eff_r=[]
 for i in range(len(g_data)):
 	r50_tot= r50_g[i] + r50_r[i] + r50_u[i] + r50_i[i] + r50_z[i]
@@ -66,7 +72,6 @@ for i in range(len(g_data)):
 fig, axs = plt.subplots(figsize=(6,4))
 counts,xbins,ybins=np.histogram2d(gr_data,Mr_data,bins=100, range=[[0,1],[-26, -14]], density=True)
 
-#mylevels=[0.001, 0.1, 1]
 pcp0= plt.contour(counts.transpose(), extent=[xbins.min(),xbins.max(),ybins.min(),ybins.max()], cmap='rainbow')
 fig.colorbar(pcp0, ax=axs)
 
@@ -87,7 +92,8 @@ for i in range(len(g_data)):
 		r50_sns.append(r50_s)
 				
 
-
+#### created 2D histogram plots for the distribution of the parameters
+#### the parameters can be changed and one can use the same script
 
 d = {'g_sns': g_sns, 'Mr_sns': Mr_sns}
 df_pd = pd.DataFrame(data=d)
